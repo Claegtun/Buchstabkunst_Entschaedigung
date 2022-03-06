@@ -87,10 +87,12 @@ void run()
 	File* pFile = readFile("bocklin-_2_");
 
 	ofstream smRawText("raw.txt");
-
 	smRawText << pFile->print(10);
-
 	smRawText.close();
+
+	ofstream smArtText("art.txt");
+	smArtText << pFile->paint();
+	smArtText.close();
 
 	delete pFile;
 	return;

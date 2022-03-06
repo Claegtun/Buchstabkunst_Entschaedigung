@@ -17,7 +17,8 @@ public:
 	/**
 	 * Constructor
 	 */
-	File(const int&, const int&, const int&, const int&, unsigned char*);
+	File(const unsigned int&, const unsigned int&, const unsigned int&,
+			const unsigned int&, unsigned char*);
 	/**
 	 * Destructor
 	 */
@@ -27,17 +28,17 @@ public:
 	 * Parameters: the base of the numbers (the default is binary)
 	 * Return: a string of the image contents
 	 */
-	const string print(const int&);
+	const string print(const unsigned int&);
 	/**
-	 * Paint the ASCII art in a file.
-	 * Parameters: the name of the file to be created or overwritten.
-	 * Return: a return-code: 0 for success
+	 * Paint the ASCII art into a string.
+	 * Parameters:
+	 * Return: a string of the ASCII art
 	 */
-	//const int paint(const string&);
+	const string paint();
 
 
 private:
-	int inHeight, inWidth, inMaximum, inLength, inType;
+	unsigned int inHeight, inWidth, inMaximum, inLength, inType;
 	unsigned char* puchData;
 };
 

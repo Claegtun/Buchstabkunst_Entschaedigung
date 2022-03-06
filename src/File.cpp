@@ -10,8 +10,9 @@
 /**
  * Constructor
  */
-File::File(const int& inTypeArg = 5, const int& inWidthArg = 0, const int& inHeightArg = 0,
-		const int& inMaximumArg = 1, unsigned char* puchDataArg = NULL)
+File::File(const unsigned int& inTypeArg = 5, const unsigned int& inWidthArg = 0,
+		const unsigned int& inHeightArg = 0, const unsigned int& inMaximumArg = 1,
+		unsigned char* puchDataArg = NULL)
 {
 	inType = inTypeArg;
 	inWidth = inWidthArg;
@@ -34,7 +35,7 @@ File::~File()
  * Parameters: the base of the numbers (the default is binary)
  * Return: a string of the image contents
  */
-const string File::print(const int& inBase)
+const string File::print(const unsigned int& inBase)
 {
 	string str = "";
 
@@ -58,7 +59,7 @@ const string File::print(const int& inBase)
 					str += "0";
 				str += to_string((uint8_t)puchData[i]);
 
-				//str += " ";
+				str += " ";
 
 				//Add a newline after each row.
 				if (((i+1) % inWidth) == 0)
@@ -72,13 +73,31 @@ const string File::print(const int& inBase)
 }
 
 /**
- * Paint the ASCII art in a file.
- * Parameters: the name of the file to be created or overwritten without the extension.
- * Return: a return-code: 0 for success
+ * Paint the ASCII art into a string.
+ * Parameters:
+ * Return: a string of the ASCII art
  */
-/*const string File::paint(const string& strFileName)
+const string File::paint()
 {
+	const char A10chShortSet[] = " .:-=+*#%@@";
+	//const char A10chShortSet[] = "@@%#*+=-:. ";
+	const unsigned int inShortSetLength = 11;
+	string str;
+	char ch;
 
-	return 0;
-}*/
+	//Each row:
+	for (unsigned int i = 0; i < inHeight; i++)
+	{
+		for (unsigned int j = 0; j < inWidth; j++)
+		{
+			ch = A10chShortSet[(unsigned int)puchData[i*inWidth+j]*(inShortSetLength-1)/(inMaximum)];
+			str += ch;
+			str += ch;
+		}
+
+		str += "\n";
+	}
+
+	return str;
+}
 
