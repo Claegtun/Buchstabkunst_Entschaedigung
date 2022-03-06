@@ -10,15 +10,15 @@
 /**
  * Constructor
  */
-File::File(const int& inTypeArg = 5, const int& inHeightArg = 0, const int& inWidthArg = 0,
-		const int& inMaximumArg = 1, char* pchBuffer = NULL)
+File::File(const int& inTypeArg = 5, const int& inWidthArg = 0, const int& inHeightArg = 0,
+		const int& inMaximumArg = 1, unsigned char* puchDataArg = NULL)
 {
 	inType = inTypeArg;
-	inHeight = inHeightArg;
 	inWidth = inWidthArg;
+	inHeight = inHeightArg;
 	inMaximum = inMaximumArg;
 	inLength = inHeight*inWidth;
-	pchData = pchBuffer;
+	puchData = puchDataArg;
 }
 
 /**
@@ -26,26 +26,59 @@ File::File(const int& inTypeArg = 5, const int& inHeightArg = 0, const int& inWi
  */
 File::~File()
 {
-
+	delete puchData;
 }
 
 /**
- * Print
- * Parameters:
+ * Print for debugging purposes.
+ * Parameters: the base of the numbers (the default is binary)
  * Return: a string of the image contents
  */
-const string File::print()
+const string File::print(const int& inBase)
 {
 	string str = "";
 
 	for (int i = 0; i < inLength; i++)
 	{
-		for (int j = 0; j < 8; j++)
-			str += ((pchData[i] >> j) & 1) == 1 ? "1" : "0";
+		switch (inBase) {
+			//Binary:
+			default:
+			case 2:
+				for (int j = 0; j < 8; j++)
+					str += ((puchData[i] >> j) & 1) == 1 ? "1" : "0";
 
-		str += " ";
+				//str += " ";
+				break;
+			//Decimal:
+			case 10:
+				//Add leading zeros.
+				if (puchData[i] < 10)
+					str += "00";
+				else if (puchData[i] < 100)
+					str += "0";
+				str += to_string((uint8_t)puchData[i]);
+
+				//str += " ";
+
+				//Add a newline after each row.
+				if (((i+1) % inWidth) == 0)
+					str += "\n";
+				break;
+		}
+
 	}
 
 	return str;
 }
+
+/**
+ * Paint the ASCII art in a file.
+ * Parameters: the name of the file to be created or overwritten without the extension.
+ * Return: a return-code: 0 for success
+ */
+/*const string File::paint(const string& strFileName)
+{
+
+	return 0;
+}*/
 

@@ -16,8 +16,8 @@ using namespace std;
 
 /**
  * Read file
- * Parameters: the name of the file without extension
- * Return: a poitner to a file.
+ * Parameters: the name of the PGM file without extension
+ * Return: a pointer to a file.
  */
 File* readFile(const string& strFileName)
 {
@@ -31,13 +31,13 @@ File* readFile(const string& strFileName)
 
 	//Find the length of the file.
 	smInput.seekg(0, smInput.end);
-	int iFileLength = smInput.tellg();
+	int inFileLength = smInput.tellg();
 	smInput.seekg(0, smInput.beg);
-	cout << iFileLength << endl;
+	cout << inFileLength << endl;
 
 	//Read the input file into a buffer.
-	char* pchBuffer = new char[iFileLength];
-	smInput.read(pchBuffer, iFileLength);
+	char* pchBuffer = new char[inFileLength];
+	smInput.read(pchBuffer, inFileLength);
 	smInput.close();
 
 	//Check the header.
@@ -49,22 +49,30 @@ File* readFile(const string& strFileName)
 
 	//Read the header.
 	string A3strHeader[3]; //Width, Height, Maximum
-	int inIndex = 3; //The index in the buffer
+	int inHeaderLength = 3; //The index in the buffer
 	int inSafety = 0; //The safety count for skipping whitespaces
 	//For each three arguments in the header, skip all whitespaces in between each and concatenate a string of the number.
 	for (int i = 0; i < 3; i++)
 	{
-		while (((pchBuffer[inIndex] == ' ') || (pchBuffer[inIndex] == '\n')) && (inSafety++ < 100))
-			inIndex++;
-		while ((pchBuffer[inIndex] != ' ') && (pchBuffer[inIndex] != '\n'))
-		{
-			A3strHeader[i] += pchBuffer[inIndex++];
-		}
+		while (((pchBuffer[inHeaderLength] == ' ') || (pchBuffer[inHeaderLength] == '\n')) && (inSafety++ < 100))
+			inHeaderLength++;
+		while ((pchBuffer[inHeaderLength] != ' ') && (pchBuffer[inHeaderLength] != '\n'))
+			A3strHeader[i] += pchBuffer[inHeaderLength++];
 		cout << A3strHeader[i] << endl;
 	}
 
+	//Read the data.
+	int inDataLength = inFileLength - inHeaderLength;
+	unsigned char* puchData = new unsigned char[inDataLength];
+	for (int i = 0; i < inDataLength; i++)
+		puchData[i] = pchBuffer[i+inHeaderLength];
+
 	//Make the File object.
-	File* pFile;// = new File();
+	File* pFile = new File(	5,
+							stoi(A3strHeader[0],nullptr,10),
+							stoi(A3strHeader[1],nullptr,10),
+							stoi(A3strHeader[2],nullptr,10),
+							puchData);
 
 	return pFile;
 }
@@ -77,6 +85,14 @@ File* readFile(const string& strFileName)
 void run()
 {
 	File* pFile = readFile("bocklin-_2_");
+
+	ofstream smRawText("raw.txt");
+
+	smRawText << pFile->print(10);
+
+	smRawText.close();
+
+	delete pFile;
 	return;
 }
 
