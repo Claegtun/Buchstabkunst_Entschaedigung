@@ -40,10 +40,10 @@ public:
 	const string print(const unsigned int&);
 	/**
 	 * Paint the ASCII art into a string.
-	 * Parameters:
+	 * Parameters: the divisor, i.e. the reduction, in resolution.
 	 * Return: a string of the ASCII art
 	 */
-	const string paint();
+	const string paint(const unsigned int&);
 
 
 private:

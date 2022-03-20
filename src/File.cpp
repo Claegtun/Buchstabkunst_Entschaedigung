@@ -141,24 +141,39 @@ const string File::print(const unsigned int& inBase)
 
 /**
  * Paint the ASCII art into a string.
- * Parameters:
+ * Parameters: the divisor, i.e. the reduction, in resolution.
  * Return: a string of the ASCII art
  */
-const string File::paint()
+const string File::paint(const unsigned int& divisor = 1)
 {
 	const char A10chShortSet[] = " .:-=+*#%@@";
 	//const char A10chShortSet[] = "@@%#*+=-:. ";
 	const unsigned int inShortSetLength = 11;
 	string str;
 	char ch;
+	float fpValue;
+	float fpAverage;
 
 	//Each row:
-	for (unsigned int i = 0; i < inHeight; i++)
+	for (unsigned int i = 0; i < inHeight/divisor; i+=divisor)
 	{
 		//Each pixel:
-		for (unsigned int j = 0; j < inWidth; j++)
+		for (unsigned int j = 0; j < inWidth/divisor; j+=divisor)
 		{
-			ch = A10chShortSet[(unsigned int)puchData[i*inWidth+j]*(inShortSetLength-1)/(inMaximum)];
+			//Compute the average.
+			fpAverage = 0;
+			for (unsigned int iPix = 0; iPix < divisor; iPix++)
+			{
+				for (unsigned int jPix = 0; jPix < divisor; jPix++)
+				{
+					//Compute the value of the pixel.
+					fpValue = (float)(puchData[i*inWidth*divisor+j*divisor]
+												*(inShortSetLength-1)
+												/inMaximum);
+					fpAverage += fpValue / ((float)(divisor*divisor));
+				}
+			}
+			ch = A10chShortSet[(unsigned int)(fpAverage+0.5)];
 			str += ch;
 			str += ch;
 		}

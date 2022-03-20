@@ -29,7 +29,7 @@ void run()
 	smRawText.close();
 
 	ofstream smArtText("art.txt");
-	smArtText << pFile->paint();
+	smArtText << pFile->paint(2);
 	smArtText.close();
 
 	delete pFile;
