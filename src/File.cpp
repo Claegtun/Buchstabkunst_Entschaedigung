@@ -5,11 +5,21 @@
  *      Author: Claegtun
  */
 
+#include <fstream> //file IO
 #include "File.h"
 
 /**
  * Constructor
  */
+File::File()
+{
+	inType = 5;
+	inWidth = 0;
+	inHeight = 0;
+	inMaximum = 0;
+	inLength = inHeight*inWidth;
+	puchData = NULL;
+}
 File::File(const unsigned int& inTypeArg = 5, const unsigned int& inWidthArg = 0,
 		const unsigned int& inHeightArg = 0, const unsigned int& inMaximumArg = 1,
 		unsigned char* puchDataArg = NULL)
@@ -28,6 +38,63 @@ File::File(const unsigned int& inTypeArg = 5, const unsigned int& inWidthArg = 0
 File::~File()
 {
 	delete puchData;
+}
+
+/**
+ * Read a PGM file
+ * Parameters: the name of the PGM file without extension
+ * Return: 	0 means fine;
+ * 			1 means that the file could not be opened;
+ * 			2 means that the format is invalid;
+ */
+const int File::readFile(const string& strFileName)
+{
+	//Open the input file.
+	ifstream smInput(strFileName+".pgm");
+	if (!smInput.is_open())
+		return 1;
+
+	//Find the length of the file.
+	smInput.seekg(0, smInput.end);
+	int inFileLength = smInput.tellg();
+	smInput.seekg(0, smInput.beg);
+
+	//Read the input file into a buffer.
+	char* pchBuffer = new char[inFileLength];
+	smInput.read(pchBuffer, inFileLength);
+	smInput.close();
+
+	//Check the header.
+	if ((pchBuffer[0] != 'P') || (pchBuffer[1] != '5'))
+		return 2;
+
+	//Read the header.
+	string A3strHeader[3]; //Width, Height, Maximum
+	int inHeaderLength = 3; //The index in the buffer
+	int inSafety = 0; //The safety count for skipping whitespaces
+	//For each three arguments in the header, skip all whitespaces in between each and concatenate a string of the number.
+	for (int i = 0; i < 3; i++)
+	{
+		while (((pchBuffer[inHeaderLength] == ' ') || (pchBuffer[inHeaderLength] == '\n')) && (inSafety++ < 100))
+			inHeaderLength++;
+		while ((pchBuffer[inHeaderLength] != ' ') && (pchBuffer[inHeaderLength] != '\n'))
+			A3strHeader[i] += pchBuffer[inHeaderLength++];
+	}
+
+	//Read the data.
+	int inDataLength = inFileLength - inHeaderLength;
+	unsigned char* puchDataTemp = new unsigned char[inDataLength];
+	for (int i = 0; i < inDataLength; i++)
+		puchDataTemp[i] = pchBuffer[i+inHeaderLength];
+
+	//Define the rest of the file's properties.
+	inType = 5;
+	inWidth = stoi(A3strHeader[0],nullptr,10);
+	inHeight = stoi(A3strHeader[1],nullptr,10);
+	inMaximum = stoi(A3strHeader[2],nullptr,10);
+	puchData = puchDataTemp;
+
+	return 0;
 }
 
 /**
@@ -88,6 +155,7 @@ const string File::paint()
 	//Each row:
 	for (unsigned int i = 0; i < inHeight; i++)
 	{
+		//Each pixel:
 		for (unsigned int j = 0; j < inWidth; j++)
 		{
 			ch = A10chShortSet[(unsigned int)puchData[i*inWidth+j]*(inShortSetLength-1)/(inMaximum)];

@@ -17,12 +17,21 @@ public:
 	/**
 	 * Constructor
 	 */
+	File();
 	File(const unsigned int&, const unsigned int&, const unsigned int&,
 			const unsigned int&, unsigned char*);
 	/**
 	 * Destructor
 	 */
 	virtual ~File();
+	/**
+	 * Read a PGM file
+	 * Parameters: the name of the PGM file without extension
+	 * Return: 	0 means fine;
+	 * 			1 means that the file could not be opened;
+	 * 			2 means that the format is invalid;
+	 */
+	const int readFile(const string& strFileName);
 	/**
 	 * Print for debugging purposes.
 	 * Parameters: the base of the numbers (the default is binary)
